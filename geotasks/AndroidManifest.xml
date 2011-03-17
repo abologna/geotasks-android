@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.geotasks.android" android:versionCode="1"
+	android:versionName="1.0">
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name">
+
+		<provider android:name="com.geotasks.provider.GeoTasksProvider"
+			android:authorities="com.geotasks.provider.geotasksprovider">
+			<grant-uri-permission android:pathPattern=".*" />
+		</provider>
+
+		<activity android:name="com.geotasks.PlacesList"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name="com.geotasks.PlaceEditor"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+	</application>
+</manifest>
