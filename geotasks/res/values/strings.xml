@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoTasks</string>
-    <string name="button_ok">OK</string>
+    <string name="button_add">Done</string>
+    <string name="add_task">Add Task</string>
 </resources>

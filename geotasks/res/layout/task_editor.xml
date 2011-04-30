@@ -7,7 +7,7 @@
     android:paddingRight="6dip"
     android:paddingBottom="3dip">
    					  
-    <EditText android:id="@+id/title" 
+    <EditText android:id="@+id/name" 
         android:maxLines="1" 
         android:layout_marginTop="2dip"
         android:layout_width="wrap_content"
@@ -17,9 +17,9 @@
         android:capitalize="sentences"
         android:scrollHorizontally="true" />
    		
-    <Button android:id="@+id/ok"
+    <Button android:id="@+id/done"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content" 
         android:layout_gravity="right"
-        android:text="@string/button_ok" />
+        android:text="@string/button_add" />
 </LinearLayout>
