@@ -19,11 +19,6 @@ import android.util.Log;
 public class GeoTasksProvider extends ContentProvider {
   private static final String TAG = "GeoTasksProvider";
 
-  private static final String DATABASE_NAME = "geotasks.db";
-  private static final int DATABASE_VERSION = 1;
-  private static final String TASKS_TABLE_NAME = "tasks";
-  private static final String PLACES_TABLE_NAME = "places";
-
   private static final UriMatcher uriMatcher;
   private static final String AUTHORITY = "com.geotasks.provider.geotasksprovider";
   private static final int PLACES = 1;
@@ -37,28 +32,20 @@ public class GeoTasksProvider extends ContentProvider {
   private static class DatabaseHelper extends SQLiteOpenHelper {
 
     DatabaseHelper(Context context) {
-      super(context, DATABASE_NAME, null, DATABASE_VERSION);
+      super(context, Database.NAME, Database.DEFAULT_CURSOR_FACTORY, Database.VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-      db.execSQL("CREATE TABLE " + TASKS_TABLE_NAME + " (" + Tasks._ID
-              + " INTEGER PRIMARY KEY," + Tasks.NAME + " TEXT," + Tasks.COMPLETED + " BOOLEAN,"
-              + Tasks.PLACE_ID + " INTEGER," + Tasks.DESCRIPTION + " TEXT,"
-              + Tasks.CREATED_DATE + " INTEGER," + Tasks.MODIFIED_DATE + " INTEGER);");
-
-      db.execSQL("CREATE TABLE " + PLACES_TABLE_NAME + " (" + Places._ID
-              + " INTEGER PRIMARY KEY," + Places.NAME + " TEXT,"
-              + Places.LATITUDE + " DECIMAL," + Places.LONGITUDE + " DECIMAL);");
-
+      db.execSQL(Tasks.SQL.CREATE_TABLE);
+      db.execSQL(Places.SQL.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-      Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-              + newVersion + ", which will destroy all old data");
-      db.execSQL("DROP TABLE IF EXISTS tasks");
-      db.execSQL("DROP TABLE IF EXISTS places");
+      Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion); 
+      db.execSQL(Tasks.SQL.DROP_TABLE);
+      db.execSQL(Places.SQL.DROP_TABLE);
       onCreate(db);
     }
   }
@@ -77,19 +64,19 @@ public class GeoTasksProvider extends ContentProvider {
     int count;
     switch (uriMatcher.match(uri)) {
       case TASKS:
-        count = db.delete(TASKS_TABLE_NAME, selection, selectionArgs);
+        count = db.delete(Tasks.SQL.TABLE_NAME, selection, selectionArgs);
         break;
       case TASK_ID:
         String taskId = uri.getPathSegments().get(1);
-        count = db.delete(TASKS_TABLE_NAME, Tasks._ID + "=" + taskId
+        count = db.delete(Tasks.SQL.TABLE_NAME, Tasks._ID + "=" + taskId
             + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
         break;
       case PLACES:
-        count = db.delete(PLACES_TABLE_NAME, selection, selectionArgs);
+        count = db.delete(Places.SQL.TABLE_NAME, selection, selectionArgs);
         break;
       case PLACE_ID:
         String placeId = uri.getPathSegments().get(1);
-        count = db.delete(PLACES_TABLE_NAME, Places._ID + "=" + placeId
+        count = db.delete(Places.SQL.TABLE_NAME, Places._ID + "=" + placeId
             + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
         break;
       default:
@@ -138,11 +125,11 @@ public class GeoTasksProvider extends ContentProvider {
         if (values.containsKey(Tasks.COMPLETED) == false) {
           values.put(Tasks.COMPLETED, "false");
         }
-        tableName = TASKS_TABLE_NAME;
+        tableName = Tasks.SQL.TABLE_NAME;
         contentUri = Tasks.CONTENT_URI;
         break;
       case PLACES:
-        tableName = PLACES_TABLE_NAME;
+        tableName = Tasks.SQL.TABLE_NAME;
         contentUri = Places.CONTENT_URI;
         break;
       default:
@@ -170,7 +157,7 @@ public class GeoTasksProvider extends ContentProvider {
         qb.appendWhere(Tasks._ID + "=" + uri.getPathSegments().get(1));
         // intentionally missing break
       case TASKS:
-        qb.setTables(TASKS_TABLE_NAME);
+        qb.setTables(Tasks.SQL.TABLE_NAME);
         qb.setProjectionMap(tasksProjectionMap);
         orderBy = TextUtils.isEmpty(sortOrder) ? Tasks.DEFAULT_SORT_ORDER : sortOrder;
         break;
@@ -178,7 +165,7 @@ public class GeoTasksProvider extends ContentProvider {
         qb.appendWhere(Places._ID + "=" + uri.getPathSegments().get(1));
         // intentionally missing break
       case PLACES:
-        qb.setTables(PLACES_TABLE_NAME);
+        qb.setTables(Places.SQL.TABLE_NAME);
         qb.setProjectionMap(placesProjectionMap);
         orderBy = TextUtils.isEmpty(sortOrder) ? Places.DEFAULT_SORT_ORDER : sortOrder;
         break;
@@ -202,19 +189,19 @@ public class GeoTasksProvider extends ContentProvider {
     int count;
     switch (uriMatcher.match(uri)) {
       case TASKS:
-        count = db.update(TASKS_TABLE_NAME, values, selection, selectionArgs);
+        count = db.update(Tasks.SQL.TABLE_NAME, values, selection, selectionArgs);
         break;
       case TASK_ID:
         String taskId = uri.getPathSegments().get(1);
-        count = db.update(TASKS_TABLE_NAME, values, Tasks._ID + "=" + taskId
+        count = db.update(Tasks.SQL.TABLE_NAME, values, Tasks._ID + "=" + taskId
             + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
         break;
       case PLACES:
-        count = db.update(PLACES_TABLE_NAME, values, selection, selectionArgs);
+        count = db.update(Places.SQL.TABLE_NAME, values, selection, selectionArgs);
         break;
       case PLACE_ID:
         String placeId = uri.getPathSegments().get(1);
-        count = db.update(PLACES_TABLE_NAME, values, Places._ID + "=" + placeId
+        count = db.update(Places.SQL.TABLE_NAME, values, Places._ID + "=" + placeId
             + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
         break;
       default:

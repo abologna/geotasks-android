@@ -24,4 +24,19 @@ public class Tasks implements BaseColumns {
   public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.geotasks.task";
 
   public static final String DEFAULT_SORT_ORDER = "modified_date DESC";
+  
+  // SQL
+  
+  public static class SQL {
+	  public static final String TABLE_NAME = "tasks";
+	  public static final String CREATE_TABLE = "CREATE TABLE "+TABLE_NAME+" (" + _ID + " INTEGER PRIMARY KEY," 
+ 																				 + NAME + " TEXT," 
+ 																				 + COMPLETED + " BOOLEAN," 
+ 																				 + PLACE_ID + " INTEGER," 
+ 																				 + DESCRIPTION + " TEXT," 
+ 																				 + CREATED_DATE + " INTEGER," 
+ 																				 + MODIFIED_DATE + " INTEGER);";
+	  public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME; 
+	  
+  }
 }

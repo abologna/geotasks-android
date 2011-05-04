@@ -19,4 +19,12 @@ public class Places implements BaseColumns {
 
   public static final String DEFAULT_SORT_ORDER = "name ASC";
   
+  public static class SQL{
+	  public static final String TABLE_NAME = "places";
+	  public static final String CREATE_TABLE = "CREATE TABLE "+TABLE_NAME+" (" + _ID + " INTEGER PRIMARY KEY," 
+	  																			+ NAME + " TEXT,"
+	  																			+ LATITUDE + " DECIMAL," 
+	  																			+ LONGITUDE + " DECIMAL);";
+	  public static final String DROP_TABLE = "DROP TABLE IF EXISTS "+TABLE_NAME;
+  }
 }
