@@ -129,7 +129,7 @@ public class GeoTasksProvider extends ContentProvider {
         contentUri = Tasks.CONTENT_URI;
         break;
       case PLACES:
-        tableName = Tasks.SQL.TABLE_NAME;
+        tableName = Places.SQL.TABLE_NAME;
         contentUri = Places.CONTENT_URI;
         break;
       default:
