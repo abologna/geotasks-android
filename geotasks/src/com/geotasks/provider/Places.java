@@ -1,7 +1,9 @@
 package com.geotasks.provider;
 
-import android.net.Uri;
-import android.provider.BaseColumns;
+import java.util.*;
+
+import android.net.*;
+import android.provider.*;
 
 public class Places implements BaseColumns {
   public static final Uri CONTENT_URI
@@ -26,5 +28,17 @@ public class Places implements BaseColumns {
 	  																			+ LATITUDE + " DECIMAL," 
 	  																			+ LONGITUDE + " DECIMAL);";
 	  public static final String DROP_TABLE = "DROP TABLE IF EXISTS "+TABLE_NAME;
+  }
+  
+  public static final Map<String, String> PROJECTION_MAP = getProjectionMap();
+  
+  private static final Map<String, String> getProjectionMap()
+  {
+    Map<String,String> map = new HashMap<String, String>();
+    map.put(Places._ID, Places._ID);
+    map.put(Places.NAME, Places.NAME);
+    map.put(Places.LONGITUDE, Places.LONGITUDE);
+    map.put(Places.LATITUDE, Places.LATITUDE);
+    return Collections.unmodifiableMap(map);
   }
 }

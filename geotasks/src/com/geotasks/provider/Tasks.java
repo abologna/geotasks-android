@@ -1,5 +1,7 @@
 package com.geotasks.provider;
 
+import java.util.*;
+
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -38,5 +40,19 @@ public class Tasks implements BaseColumns {
  																				 + MODIFIED_DATE + " INTEGER);";
 	  public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME; 
 	  
+  }
+  
+  public static final Map<String, String> PROJECTION_MAP = createProjectionMap();
+  private static final Map<String, String> createProjectionMap()
+  {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put(Tasks._ID, Tasks._ID);
+    map.put(Tasks.NAME, Tasks.NAME);
+    map.put(Tasks.PLACE_ID, Tasks.PLACE_ID);
+    map.put(Tasks.CREATED_DATE, Tasks.CREATED_DATE);
+    map.put(Tasks.MODIFIED_DATE, Tasks.MODIFIED_DATE);
+    map.put(Tasks.COMPLETED, Tasks.COMPLETED);
+    map.put(Tasks.DESCRIPTION, Tasks.DESCRIPTION);
+    return Collections.unmodifiableMap(map);
   }
 }

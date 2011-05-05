@@ -1,24 +1,12 @@
 package com.geotasks.provider;
 
-import java.util.HashMap;
+import android.content.*;
+import android.database.*;
+import android.net.*;
 
-import android.content.ContentProvider;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.UriMatcher;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
+import com.geotasks.database.*;
 
 public class GeoTasksProvider extends ContentProvider {
-  private static final String TAG = "GeoTasksProvider";
-
   private static final UriMatcher uriMatcher;
   private static final String AUTHORITY = "com.geotasks.provider.geotasksprovider";
   private static final int PLACES = 1;
@@ -26,62 +14,36 @@ public class GeoTasksProvider extends ContentProvider {
   private static final int TASKS = 3;
   private static final int TASK_ID = 4;
 
-  private static HashMap<String, String> tasksProjectionMap;
-  private static HashMap<String, String> placesProjectionMap;
-
-  private static class DatabaseHelper extends SQLiteOpenHelper {
-
-    DatabaseHelper(Context context) {
-      super(context, Database.NAME, Database.DEFAULT_CURSOR_FACTORY, Database.VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-      db.execSQL(Tasks.SQL.CREATE_TABLE);
-      db.execSQL(Places.SQL.CREATE_TABLE);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-      Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion); 
-      db.execSQL(Tasks.SQL.DROP_TABLE);
-      db.execSQL(Places.SQL.DROP_TABLE);
-      onCreate(db);
-    }
-  }
-
-  private DatabaseHelper databaseHelper;
+  private DatabaseService databaseService;
 
   @Override
   public boolean onCreate() {
-    databaseHelper = new DatabaseHelper(getContext());
+    databaseService = new SQLiteDatabaseService(getContext());
     return true;
   }
 
   @Override
   public int delete(Uri uri, String selection, String[] selectionArgs) {
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();  
     int count;
     switch (uriMatcher.match(uri)) {
       case TASKS:
-        count = db.delete(Tasks.SQL.TABLE_NAME, selection, selectionArgs);
+        count = databaseService.deleteTask(selection, selectionArgs);
         break;
       case TASK_ID:
         String taskId = uri.getPathSegments().get(1);
-        count = db.delete(Tasks.SQL.TABLE_NAME, Tasks._ID + "=" + taskId
-            + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        count = databaseService.deleteTaskId(taskId, selection, selectionArgs);
         break;
       case PLACES:
-        count = db.delete(Places.SQL.TABLE_NAME, selection, selectionArgs);
+        count = databaseService.deletePlace(selection, selectionArgs);
         break;
       case PLACE_ID:
         String placeId = uri.getPathSegments().get(1);
-        count = db.delete(Places.SQL.TABLE_NAME, Places._ID + "=" + placeId
-            + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        count = databaseService.deletePlaceId(placeId, selection, selectionArgs);
         break;
       default:
         throw new IllegalArgumentException("Unknown URI " + uri);
     }
+    // TODO replace null
     getContext().getContentResolver().notifyChange(uri, null);
     return count;
   }
@@ -103,40 +65,21 @@ public class GeoTasksProvider extends ContentProvider {
   }
 
   @Override
-  public Uri insert(Uri uri, ContentValues initialValues) {
-
-    ContentValues values;
-    if (initialValues != null) {
-      values = new ContentValues(initialValues);
-    } else {
-      values = new ContentValues();
-    }
-    String tableName;
+  public Uri insert(Uri uri, ContentValues values) {
     Uri contentUri;
+    long rowId;
     switch (uriMatcher.match(uri)) {
       case TASKS:
-        Long now = Long.valueOf(System.currentTimeMillis());
-        if (values.containsKey(Tasks.CREATED_DATE) == false) {
-          values.put(Tasks.CREATED_DATE, now);
-        }
-        if (values.containsKey(Tasks.MODIFIED_DATE) == false) {
-          values.put(Tasks.MODIFIED_DATE, now);
-        }
-        if (values.containsKey(Tasks.COMPLETED) == false) {
-          values.put(Tasks.COMPLETED, "false");
-        }
-        tableName = Tasks.SQL.TABLE_NAME;
+        rowId = databaseService.createTask(values);
         contentUri = Tasks.CONTENT_URI;
         break;
       case PLACES:
-        tableName = Places.SQL.TABLE_NAME;
+        rowId = databaseService.createPlace(values);
         contentUri = Places.CONTENT_URI;
         break;
       default:
         throw new IllegalArgumentException("Unknown URI " + uri);
     }
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();
-    long rowId = db.insert(tableName, null, values);
     if (rowId > 0) {
       Uri itemUri = ContentUris.withAppendedId(contentUri, rowId);
       getContext().getContentResolver().notifyChange(itemUri, null);
@@ -146,63 +89,48 @@ public class GeoTasksProvider extends ContentProvider {
   }
 
   @Override
-  public Cursor query(Uri uri, String[] projection, String selection,
-          String[] selectionArgs, String sortOrder) {
-
-    SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-    String orderBy;
-
+  public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    Cursor cursor;
     switch (uriMatcher.match(uri)) {
       case TASK_ID:
-        qb.appendWhere(Tasks._ID + "=" + uri.getPathSegments().get(1));
-        // intentionally missing break
+        String taskId = uri.getPathSegments().get(1);
+        cursor = databaseService.getTaskById(taskId, projection, selection, selectionArgs, sortOrder);
+        break;
       case TASKS:
-        qb.setTables(Tasks.SQL.TABLE_NAME);
-        qb.setProjectionMap(tasksProjectionMap);
-        orderBy = TextUtils.isEmpty(sortOrder) ? Tasks.DEFAULT_SORT_ORDER : sortOrder;
+        cursor = databaseService.getAllTasks(projection, selection, selectionArgs, sortOrder);
         break;
       case PLACE_ID:
-        qb.appendWhere(Places._ID + "=" + uri.getPathSegments().get(1));
-        // intentionally missing break
+        String placeId = uri.getPathSegments().get(1);
+        cursor = databaseService.getPlaceById(placeId, projection, selection, selectionArgs, sortOrder);
+        break;
       case PLACES:
-        qb.setTables(Places.SQL.TABLE_NAME);
-        qb.setProjectionMap(placesProjectionMap);
-        orderBy = TextUtils.isEmpty(sortOrder) ? Places.DEFAULT_SORT_ORDER : sortOrder;
+        cursor = databaseService.getAllPlaces(projection, selection, selectionArgs, sortOrder);
         break;
       default:
         throw new IllegalArgumentException("Unknown URI " + uri);
     }
-
-    SQLiteDatabase db = databaseHelper.getReadableDatabase();
-    Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
-
     // Tell the cursor what uri to watch, so it knows when its source data changes.
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
     return cursor;
-
   }
 
   @Override
-  public int update(Uri uri, ContentValues values, String selection,
-          String[] selectionArgs) { 
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();  
+  public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {   
     int count;
     switch (uriMatcher.match(uri)) {
       case TASKS:
-        count = db.update(Tasks.SQL.TABLE_NAME, values, selection, selectionArgs);
+        count = databaseService.updateTask(values, selection, selectionArgs);
         break;
       case TASK_ID:
         String taskId = uri.getPathSegments().get(1);
-        count = db.update(Tasks.SQL.TABLE_NAME, values, Tasks._ID + "=" + taskId
-            + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        count = databaseService.updateTaskId(taskId, values, selection, selectionArgs);
         break;
       case PLACES:
-        count = db.update(Places.SQL.TABLE_NAME, values, selection, selectionArgs);
+        count = databaseService.updatePlace(values, selection, selectionArgs);
         break;
       case PLACE_ID:
         String placeId = uri.getPathSegments().get(1);
-        count = db.update(Places.SQL.TABLE_NAME, values, Places._ID + "=" + placeId
-            + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        count = databaseService.updatePlaceId(placeId, values, selection, selectionArgs);
         break;
       default:
         throw new IllegalArgumentException("Unknown URI " + uri);
@@ -217,21 +145,6 @@ public class GeoTasksProvider extends ContentProvider {
     uriMatcher.addURI(AUTHORITY, "places/#", PLACE_ID);
     uriMatcher.addURI(AUTHORITY, "tasks", TASKS);
     uriMatcher.addURI(AUTHORITY, "tasks/#", TASK_ID);
-
-    tasksProjectionMap = new HashMap<String, String>();
-    tasksProjectionMap.put(Tasks._ID, Tasks._ID);
-    tasksProjectionMap.put(Tasks.NAME, Tasks.NAME);
-    tasksProjectionMap.put(Tasks.PLACE_ID, Tasks.PLACE_ID);
-    tasksProjectionMap.put(Tasks.CREATED_DATE, Tasks.CREATED_DATE);
-    tasksProjectionMap.put(Tasks.MODIFIED_DATE, Tasks.MODIFIED_DATE);
-    tasksProjectionMap.put(Tasks.COMPLETED, Tasks.COMPLETED);
-    tasksProjectionMap.put(Tasks.DESCRIPTION, Tasks.DESCRIPTION);
-
-    placesProjectionMap = new HashMap<String, String>();
-    placesProjectionMap.put(Places._ID, Places._ID);
-    placesProjectionMap.put(Places.NAME, Places.NAME);
-    placesProjectionMap.put(Places.LONGITUDE, Places.LONGITUDE);
-    placesProjectionMap.put(Places.LATITUDE, Places.LATITUDE);
   }
 
 }
