@@ -4,17 +4,16 @@ import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
 import android.text.*;
-import android.util.*;
 
 import com.geotasks.provider.*;
 
 public class SQLiteDatabaseService implements DatabaseService
 {
-  private DatabaseHelper dbHelper;
+  private SQLiteHelper dbHelper;
   
   public SQLiteDatabaseService(Context ctx)
   {
-    dbHelper = new DatabaseHelper(ctx);
+    dbHelper = new SQLiteHelper(ctx);
   }
 
   public int deleteTask(String selection, String[] args)
@@ -26,7 +25,7 @@ public class SQLiteDatabaseService implements DatabaseService
   public int deleteTaskId(String taskId, String selection, String[] args)
   {
     SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.delete(Tasks.SQL.TABLE_NAME, Tasks._ID + "=" + taskId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), args);
+    return db.delete(Tasks.SQL.TABLE_NAME, Tasks._ID + "=" + taskId + appendSelection(selection), args);
   }
   
   public int deletePlace(String selection, String[] args)
@@ -38,7 +37,7 @@ public class SQLiteDatabaseService implements DatabaseService
   public int deletePlaceId(String placeId, String selection, String[] args)
   {
     SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.delete(Places.SQL.TABLE_NAME, Places._ID + "=" + placeId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), args);
+    return db.delete(Places.SQL.TABLE_NAME, Places._ID + "=" + placeId + appendSelection(selection), args);
   }
 
   public long createTask(ContentValues values)
@@ -118,7 +117,7 @@ public class SQLiteDatabaseService implements DatabaseService
   public int updateTaskId(String taskId, ContentValues values, String selection, String[] selectionArgs)
   {
     SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.update(Tasks.SQL.TABLE_NAME, values, Tasks._ID + "=" + taskId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs); 
+    return db.update(Tasks.SQL.TABLE_NAME, values, Tasks._ID + "=" + taskId + appendSelection(selection), selectionArgs); 
   }
 
   public int updateTask(ContentValues values, String selection, String[] selectionArgs)
@@ -130,7 +129,7 @@ public class SQLiteDatabaseService implements DatabaseService
   public int updatePlaceId(String placeId, ContentValues values, String selection, String[] selectionArgs)
   {
     SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.update(Places.SQL.TABLE_NAME, values, Places._ID + "=" + placeId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+    return db.update(Places.SQL.TABLE_NAME, values, Places._ID + "=" + placeId + appendSelection(selection), selectionArgs);
   }
 
   public int updatePlace(ContentValues values, String selection, String[] selectionArgs)
@@ -138,31 +137,12 @@ public class SQLiteDatabaseService implements DatabaseService
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     return db.update(Places.SQL.TABLE_NAME, values, selection, selectionArgs);
   }
+
+  private String appendSelection(String selection)
+  {
+    return !TextUtils.isEmpty(selection) ? String.format(" AND (%s)", selection) : "";
+  }
   
   // TODO Create appendIfPresent(String) for AND clauses
   // TODO Create sortOrderOrDefault
-
-  private static class DatabaseHelper extends SQLiteOpenHelper
-  {
-    DatabaseHelper(Context context)
-    {
-      super(context, Database.NAME, Database.DEFAULT_CURSOR_FACTORY, Database.VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db)
-    {
-      db.execSQL(Tasks.SQL.CREATE_TABLE);
-      db.execSQL(Places.SQL.CREATE_TABLE);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
-      Log.w("GeoTasksProvider", "Upgrading database from version " + oldVersion + " to " + newVersion);
-      db.execSQL(Tasks.SQL.DROP_TABLE);
-      db.execSQL(Places.SQL.DROP_TABLE);
-      onCreate(db);
-    }
-  }
 }
