@@ -3,12 +3,13 @@ package com.geotasks.database;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
-import android.text.*;
 
+import static com.geotasks.util.StringUtil.*;
 import com.geotasks.provider.*;
 
 public class SQLiteDatabaseService implements DatabaseService
 {
+  private static final String EMPTY_STRING = "";
   private SQLiteHelper dbHelper;
   
   public SQLiteDatabaseService(Context ctx)
@@ -18,26 +19,22 @@ public class SQLiteDatabaseService implements DatabaseService
 
   public int deleteTask(String selection, String[] args)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.delete(Tasks.SQL.TABLE_NAME, selection, args);
+    return dbHelper.delete(Tasks.SQL.TABLE_NAME, selection, args);
   }
 
   public int deleteTaskId(String taskId, String selection, String[] args)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.delete(Tasks.SQL.TABLE_NAME, Tasks._ID + "=" + taskId + appendSelection(selection), args);
+    return dbHelper.delete(Tasks.SQL.TABLE_NAME, Tasks._ID + "=" + taskId + use(selection).orDefault(EMPTY_STRING), args);
   }
   
   public int deletePlace(String selection, String[] args)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.delete(Places.SQL.TABLE_NAME, selection, args);
+    return dbHelper.delete(Places.SQL.TABLE_NAME, selection, args);
   }
   
   public int deletePlaceId(String placeId, String selection, String[] args)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.delete(Places.SQL.TABLE_NAME, Places._ID + "=" + placeId + appendSelection(selection), args);
+    return dbHelper.delete(Places.SQL.TABLE_NAME, Places._ID + "=" + placeId + use(selection).orDefault(EMPTY_STRING), args);
   }
 
   public long createTask(ContentValues values)
@@ -78,7 +75,7 @@ public class SQLiteDatabaseService implements DatabaseService
     query.appendWhere(Tasks._ID + "=" + id);
     query.setTables(Tasks.SQL.TABLE_NAME);
     query.setProjectionMap(Tasks.PROJECTION_MAP);
-    String orderBy = TextUtils.isEmpty(sortOrder) ? Tasks.DEFAULT_SORT_ORDER : sortOrder;
+    String orderBy = use(sortOrder).orDefault(Tasks.DEFAULT_SORT_ORDER);
     SQLiteDatabase db = dbHelper.getReadableDatabase();
     return query.query(db, projection, selection, selectionArgs, null, null, orderBy);
   }
@@ -88,7 +85,7 @@ public class SQLiteDatabaseService implements DatabaseService
     SQLiteQueryBuilder query = new SQLiteQueryBuilder();
     query.setTables(Tasks.SQL.TABLE_NAME);
     query.setProjectionMap(Tasks.PROJECTION_MAP);
-    String orderBy = TextUtils.isEmpty(sortOrder) ? Tasks.DEFAULT_SORT_ORDER : sortOrder;
+    String orderBy = use(sortOrder).orDefault(Tasks.DEFAULT_SORT_ORDER);
     SQLiteDatabase db = dbHelper.getReadableDatabase();
     return query.query(db, projection, selection, selectionArgs, null, null, orderBy);
   }
@@ -99,7 +96,7 @@ public class SQLiteDatabaseService implements DatabaseService
     query.appendWhere(Places._ID + "=" + id);
     query.setTables(Places.SQL.TABLE_NAME);
     query.setProjectionMap(Places.PROJECTION_MAP);
-    String orderBy = TextUtils.isEmpty(sortOrder) ? Places.DEFAULT_SORT_ORDER : sortOrder;
+    String orderBy = use(sortOrder).orDefault(Places.DEFAULT_SORT_ORDER);
     SQLiteDatabase db = dbHelper.getReadableDatabase();
     return query.query(db, projection, selection, selectionArgs, null, null, orderBy);
   }
@@ -109,40 +106,28 @@ public class SQLiteDatabaseService implements DatabaseService
     SQLiteQueryBuilder query = new SQLiteQueryBuilder();
     query.setTables(Places.SQL.TABLE_NAME);
     query.setProjectionMap(Places.PROJECTION_MAP);
-    String orderBy = TextUtils.isEmpty(sortOrder) ? Places.DEFAULT_SORT_ORDER : sortOrder;
+    String orderBy = use(sortOrder).orDefault(Places.DEFAULT_SORT_ORDER);
     SQLiteDatabase db = dbHelper.getReadableDatabase();
     return query.query(db, projection, selection, selectionArgs, null, null, orderBy);
   }
 
   public int updateTaskId(String taskId, ContentValues values, String selection, String[] selectionArgs)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.update(Tasks.SQL.TABLE_NAME, values, Tasks._ID + "=" + taskId + appendSelection(selection), selectionArgs); 
+    return dbHelper.update(Tasks.SQL.TABLE_NAME, values, Tasks._ID + "=" + taskId + use(selection).orDefault(EMPTY_STRING), selectionArgs); 
   }
 
   public int updateTask(ContentValues values, String selection, String[] selectionArgs)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase(); 
-    return db.update(Tasks.SQL.TABLE_NAME, values, selection, selectionArgs);
+    return dbHelper.update(Tasks.SQL.TABLE_NAME, values, selection, selectionArgs);
   }
 
   public int updatePlaceId(String placeId, ContentValues values, String selection, String[] selectionArgs)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.update(Places.SQL.TABLE_NAME, values, Places._ID + "=" + placeId + appendSelection(selection), selectionArgs);
+    return dbHelper.update(Places.SQL.TABLE_NAME, values, Places._ID + "=" + placeId + use(selection).orDefault(EMPTY_STRING), selectionArgs);
   }
 
   public int updatePlace(ContentValues values, String selection, String[] selectionArgs)
   {
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
-    return db.update(Places.SQL.TABLE_NAME, values, selection, selectionArgs);
+    return dbHelper.update(Places.SQL.TABLE_NAME, values, selection, selectionArgs);
   }
-
-  private String appendSelection(String selection)
-  {
-    return !TextUtils.isEmpty(selection) ? String.format(" AND (%s)", selection) : "";
-  }
-  
-  // TODO Create appendIfPresent(String) for AND clauses
-  // TODO Create sortOrderOrDefault
 }

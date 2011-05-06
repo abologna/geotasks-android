@@ -28,4 +28,14 @@ class SQLiteHelper extends SQLiteOpenHelper
     db.execSQL(Places.SQL.DROP_TABLE);
     onCreate(db);
   }
+
+  public int delete(String table, String selection, String[] args)
+  {
+    return getWritableDatabase().delete(table, selection, args);
+  }
+
+  public int update(String table, ContentValues values, String selection, String[] args)
+  {
+    return getWritableDatabase().update(table, values, selection, args);
+  }
 }
