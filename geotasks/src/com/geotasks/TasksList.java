@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.geotasks.android.R;
 import com.geotasks.provider.Tasks;
@@ -23,6 +25,10 @@ public class TasksList extends ListActivity {
 
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    
+    setContentView(R.layout.activity_task_list);
+    ((TextView) findViewById(R.id.title_text)).setText(getTitle());
+    
     Intent intent = getIntent();
     if (intent.getData() == null) {
       intent.setData(Tasks.CONTENT_URI);
@@ -37,7 +43,15 @@ public class TasksList extends ListActivity {
       Log.e("Tasks List", "Query", e);
     }
   }
+  
+  public void onAddClick(View v) {
+    startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
+  }
 
+  public void onSearchClick(View v) {
+    Toast.makeText(this, "Search Not Implemented", Toast.LENGTH_SHORT).show();
+  }
+  
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();

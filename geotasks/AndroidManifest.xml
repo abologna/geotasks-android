@@ -10,14 +10,19 @@
 			<grant-uri-permission android:pathPattern=".*" />
 		</provider>
 
-		<activity android:name="com.geotasks.TasksList" android:label="@string/app_name">
+		<activity 
+		  android:name="com.geotasks.TasksList" 
+		  android:label="@string/app_name"
+		  android:theme="@style/Theme.GeoTasks">	
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
-		<activity android:name="com.geotasks.TaskEditor" android:label="@string/app_name">
+		<activity android:name="com.geotasks.TaskEditor" 
+		  android:label="@string/app_name"
+		  android:theme="@style/Theme.GeoTasks">
 			<intent-filter>
 				<action android:name="android.intent.action.EDIT" />
 				<category android:name="android.intent.category.DEFAULT" />

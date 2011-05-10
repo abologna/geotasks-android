@@ -1,0 +1,23 @@
+
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android" 
+	style="@style/TitleBar">
+
+	<ImageView style="@style/TitleBarSeparator" />
+
+	<TextView style="@style/TitleBarText"/>
+
+	<ImageView style="@style/TitleBarSeparator" />
+
+	<ImageButton style="@style/TitleBarAction"
+		android:contentDescription="@string/add_task" 
+		android:src="@drawable/ic_title_addtask"
+		android:onClick="onAddClick" />
+		
+	<ImageView style="@style/TitleBarSeparator" />
+
+	<ImageButton style="@style/TitleBarAction"
+		android:contentDescription="@string/search" 
+		android:src="@drawable/ic_title_search"
+		android:onClick="onSearchClick" />
+</LinearLayout>

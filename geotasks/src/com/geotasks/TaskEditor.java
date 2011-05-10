@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.geotasks.android.R;
 import com.geotasks.provider.Tasks;
@@ -23,7 +24,8 @@ public class TaskEditor extends Activity implements View.OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.task_editor);
+    setContentView(R.layout.activity_task_editor);
+    ((TextView) findViewById(R.id.title_text)).setText(getTitle());
 
     editName = (EditText) findViewById(R.id.name);
     Button add = (Button) this.findViewById(R.id.done);
