@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import com.geotasks.android.R;
 import com.geotasks.provider.Tasks;
 
-public class TaskEditor extends Activity implements View.OnClickListener {
+public class TaskEditor extends Activity {
 
   private Uri uri;
   private Cursor cursor;
@@ -26,13 +27,43 @@ public class TaskEditor extends Activity implements View.OnClickListener {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_task_editor);
     ((TextView) findViewById(R.id.title_text)).setText(getTitle());
-
     editName = (EditText) findViewById(R.id.name);
-    Button add = (Button) this.findViewById(R.id.done);
-    add.setOnClickListener(this);
+
+    Button save = (Button) this.findViewById(R.id.task_editor_save);
+    save.setOnClickListener(new OnClickListener() {
+      public void onClick(View v) {
+        if (cursor != null) {
+          String text = editName.getText().toString();
+          if (text.length() == 0) {
+            setResult(RESULT_CANCELED);
+            deleteTask();
+          } else {
+            ContentValues values = new ContentValues();
+            values.put(Tasks.NAME, text);
+            getContentResolver().update(uri, values, null, null);
+            setResult(RESULT_OK);
+          }
+        } else {
+          // TODO: handle null cursor case.
+          setResult(RESULT_CANCELED);
+        }
+        finish();
+      }
+    });
 
     final Intent intent = getIntent();
     final String action = intent.getAction();
+
+    Button cancel = (Button) this.findViewById(R.id.task_editor_cancel);
+    cancel.setOnClickListener(new OnClickListener() {
+      public void onClick(View v) {
+        if (Intent.ACTION_INSERT.equals(action)) {
+          deleteTask();
+        } 
+        setResult(RESULT_CANCELED);
+        finish();
+      }
+    });
 
     if (Intent.ACTION_EDIT.equals(action)) {
       uri = intent.getData();
@@ -51,24 +82,6 @@ public class TaskEditor extends Activity implements View.OnClickListener {
     }
   }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    if (cursor != null) {
-      String text = editName.getText().toString();
-      int length = text.length();
-
-      if (isFinishing() && (length == 0)) {
-        setResult(RESULT_CANCELED);
-        deleteTask();
-      } else {
-        ContentValues values = new ContentValues();
-        values.put(Tasks.NAME, text);
-        getContentResolver().update(uri, values, null, null);
-      }
-    }
-  }
-
   private void deleteTask() {
     if (cursor != null) {
       cursor.close();
@@ -76,9 +89,5 @@ public class TaskEditor extends Activity implements View.OnClickListener {
       getContentResolver().delete(uri, null, null);
       editName.setText("");
     }
-  }
-
-  public void onClick(View v) {
-    finish();
   }
 }

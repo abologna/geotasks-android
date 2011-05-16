@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    
-  <include layout="@layout/titlebar"/>
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-  	android:layout_width="wrap_content" 
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="6dip"
-    android:paddingRight="6dip"
-    android:paddingBottom="3dip">
-   					  
-    <EditText android:id="@+id/name" 
-        android:maxLines="1" 
-        android:layout_marginTop="2dip"
-        android:layout_width="wrap_content"
-      	android:ems="25"
-        android:layout_height="wrap_content" 
-        android:autoText="true"
-        android:capitalize="sentences"
-        android:scrollHorizontally="true" />
-   		
-    <Button android:id="@+id/done"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content" 
-        android:layout_gravity="right"
-        android:text="@string/button_add" />
-  </LinearLayout>
-  
+	<include layout="@layout/titlebar" />
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:paddingLeft="6dip" android:paddingRight="6dip"
+		android:paddingBottom="3dip" android:orientation="vertical">
+
+		<EditText android:id="@+id/name" android:maxLines="1"
+			android:layout_marginTop="2dip" android:layout_width="wrap_content"
+			android:ems="25" android:layout_height="wrap_content"
+			android:autoText="true" android:capitalize="sentences"
+			android:scrollHorizontally="true" android:layout_weight="1" />
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		
+		<Button android:layout_height="wrap_content"
+			android:text="Cancel"
+			android:id="@+id/task_editor_cancel" 
+			android:layout_width="fill_parent"
+			android:layout_weight="1">
+		</Button>
+		<Button android:layout_height="wrap_content" 
+			android:text="Save"
+			android:id="@+id/task_editor_save" 
+			android:layout_toRightOf="@+id/button3"
+			android:layout_width="fill_parent"
+			android:layout_weight="1">
+		</Button>
+			
+	</LinearLayout>
+	
+
 </LinearLayout>
