@@ -17,6 +17,11 @@
 			android:autoText="true" android:capitalize="sentences"
 			android:scrollHorizontally="true" android:layout_weight="1" />
 	</LinearLayout>
+	
+	<Button android:id="@+id/task_editor_setdate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Set date"/>
 
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
@@ -30,12 +35,10 @@
 		<Button android:layout_height="wrap_content" 
 			android:text="Save"
 			android:id="@+id/task_editor_save" 
-			android:layout_toRightOf="@+id/button3"
+			android:layout_toRightOf="@+id/task_editor_cancel"
 			android:layout_width="fill_parent"
 			android:layout_weight="1">
-		</Button>
-			
+		</Button>			
 	</LinearLayout>
-	
 
 </LinearLayout>

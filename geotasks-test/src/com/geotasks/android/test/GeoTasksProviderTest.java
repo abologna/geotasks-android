@@ -27,6 +27,7 @@ public class GeoTasksProviderTest extends ProviderTestCase2<GeoTasksProvider> {
 		values.put(Tasks.NAME, "test-task");
 		values.put(Tasks.DESCRIPTION, "some description");
 		values.put(Tasks.PLACE_ID, 1);
+
 		Uri result = resolver.insert(tasksUrl, values);
 		assertEquals(
 				"content://com.geotasks.provider.geotasksprovider/tasks/1",
@@ -38,10 +39,13 @@ public class GeoTasksProviderTest extends ProviderTestCase2<GeoTasksProvider> {
 		int descriptionIndex = cursor.getColumnIndex(Tasks.DESCRIPTION);
 		int placeidIndex = cursor.getColumnIndex(Tasks.PLACE_ID);
 		int completedIndex = cursor.getColumnIndex(Tasks.COMPLETED);
+		int dueDateIndex = cursor.getColumnIndex(Tasks.DUE_DATE);
+		
 		cursor.moveToFirst();
 		assertEquals("test-task", cursor.getString(nameIndex));
 		assertEquals("some description", cursor.getString(descriptionIndex));
 		assertEquals(1, cursor.getInt(placeidIndex));
+		assertEquals(0, cursor.getInt(dueDateIndex));
 		assertEquals(0, cursor.getInt(completedIndex));
 	}
 

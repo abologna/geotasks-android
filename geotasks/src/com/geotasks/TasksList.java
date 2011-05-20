@@ -28,9 +28,9 @@ public class TasksList extends ListActivity {
     }
     try {
       Cursor cursor = managedQuery(getIntent().getData(), PROJECTION, null, null, null);
-      TaskCursorAdapter adapter = new TaskCursorAdapter(
-          this, R.layout.tasks_list_item, cursor, new String[] { Tasks.NAME, Tasks.COMPLETED },
-          new int[] { R.id.taskName, R.id.taskComplete });
+      TaskCursorAdapter adapter = new TaskCursorAdapter(this, R.layout.tasks_list_item, cursor,
+          new String[] { Tasks.NAME, Tasks.COMPLETED }, new int[] { R.id.taskName,
+              R.id.taskComplete });
       setListAdapter(adapter);
 
     } catch (Exception e) {

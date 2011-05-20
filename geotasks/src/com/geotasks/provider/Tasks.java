@@ -19,6 +19,8 @@ public class Tasks implements BaseColumns {
 
   public static String MODIFIED_DATE = "modified_date";
   
+  public static String DUE_DATE = "due_date";
+  
   public static final String DESCRIPTION = "description";
   
   public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.geotasks.task";
@@ -35,7 +37,8 @@ public class Tasks implements BaseColumns {
  																				 + NAME + " TEXT," 
  																				 + COMPLETED + " BOOLEAN," 
  																				 + PLACE_ID + " INTEGER," 
- 																				 + DESCRIPTION + " TEXT," 
+ 																				 + DESCRIPTION + " TEXT,"
+ 																				 + DUE_DATE + " LONG,"
  																				 + CREATED_DATE + " INTEGER," 
  																				 + MODIFIED_DATE + " INTEGER);";
 	  public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME; 
@@ -51,6 +54,7 @@ public class Tasks implements BaseColumns {
     map.put(Tasks.PLACE_ID, Tasks.PLACE_ID);
     map.put(Tasks.CREATED_DATE, Tasks.CREATED_DATE);
     map.put(Tasks.MODIFIED_DATE, Tasks.MODIFIED_DATE);
+    map.put(Tasks.DUE_DATE, Tasks.DUE_DATE);
     map.put(Tasks.COMPLETED, Tasks.COMPLETED);
     map.put(Tasks.DESCRIPTION, Tasks.DESCRIPTION);
     return Collections.unmodifiableMap(map);
