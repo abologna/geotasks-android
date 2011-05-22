@@ -5,4 +5,6 @@
     <string name="add_task">Add Task</string>
     <string name="search">Search</string>
     <string name="empty_tasks">No Tasks Found</string>
+    <string name="to_do">To Do</string>
+    <string name="due_date">Due Date</string>
 </resources>
