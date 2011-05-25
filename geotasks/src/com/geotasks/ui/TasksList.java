@@ -1,4 +1,4 @@
-package com.geotasks;
+package com.geotasks.ui;
 
 import android.app.ListActivity;
 import android.content.Intent;

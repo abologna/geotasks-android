@@ -11,7 +11,7 @@
 			<grant-uri-permission android:pathPattern=".*" />
 		</provider>
 
-		<activity android:name="com.geotasks.TasksList"
+		<activity android:name="com.geotasks.ui.TasksList"
 			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,7 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name="com.geotasks.TaskEditor"
+		<activity android:name="com.geotasks.ui.TaskEditor"
 			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.EDIT" />

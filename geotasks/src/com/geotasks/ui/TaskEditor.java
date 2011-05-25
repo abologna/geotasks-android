@@ -1,4 +1,4 @@
-package com.geotasks;
+package com.geotasks.ui;
 
 import java.util.Calendar;
 import java.util.Date;
