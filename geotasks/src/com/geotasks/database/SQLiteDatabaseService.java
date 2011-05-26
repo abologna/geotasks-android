@@ -59,6 +59,7 @@ public class SQLiteDatabaseService implements DatabaseService
   public long createPlace(ContentValues values)
   {
     values = normalize(values);
+    values.put(Places.NAME, "");
     String tableName = Places.SQL.TABLE_NAME;
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     return db.insert(tableName, null, values);

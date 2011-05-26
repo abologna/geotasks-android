@@ -19,6 +19,14 @@
 			</intent-filter>
 		</activity>
 
+		<activity android:name="com.geotasks.ui.PlacesList"
+			android:label="@string/places">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
 		<activity android:name="com.geotasks.ui.TaskEditor"
 			android:label="@string/app_name">
 			<intent-filter>
@@ -30,6 +38,20 @@
 				<action android:name="android.intent.action.INSERT" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:mimeType="vnd.android.cursor.dir/vnd.geotasks.task" />
+			</intent-filter>
+		</activity>
+		
+		<activity android:name="com.geotasks.ui.PlaceEditor"
+			android:label="@string/places">
+			<intent-filter>
+				<action android:name="android.intent.action.EDIT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.geotasks.place" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.INSERT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/vnd.geotasks.place" />
 			</intent-filter>
 		</activity>
 

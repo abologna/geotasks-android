@@ -1,6 +1,8 @@
 geotasks/bin
 geotasks/gen
+geotasks/.settings
 geotasks-test/bin
 geotasks-test/gen
 .metadata
+
 
